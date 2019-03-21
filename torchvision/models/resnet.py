@@ -154,26 +154,37 @@ class ResNet(nn.Module):
             return x
         if name in return_layers:
             output[name] = x
+            return_layers.remove(name)
         return x
 
     def forward(self, x, return_layers=None):
         outputs = {}
+        if return_layers is not None:
+            return_layers = [l for l in return_layers]
         x = self.run('conv1', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = self.run('bn1', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = self.run('relu', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = self.run('maxpool', outputs, return_layers, x)
+        if return_layers == []: return outputs
 
         x = self.run('layer1', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = self.run('layer2', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = self.run('layer3', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = self.run('layer4', outputs, return_layers, x)
+        if return_layers == []: return outputs
 
         x = self.run('avgpool', outputs, return_layers, x)
+        if return_layers == []: return outputs
         x = x.view(x.size(0), -1)
         x = self.run('fc', outputs, return_layers, x)
+        if return_layers == []: return outputs
 
-        if return_layers:
-            return outputs
         return x
 
 
