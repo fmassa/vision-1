@@ -32,7 +32,7 @@ class VisionModule(nn.Module):
 class VisionModel(VisionModule):
     def __call__(self, *args, **kwargs):
         try:
-            _ = super(VisionModel, self).__call__(*args, **kwargs)
+            normal_output = super(VisionModel, self).__call__(*args, **kwargs)
         except StopForward:
             pass
         outputs = {}
@@ -40,6 +40,8 @@ class VisionModel(VisionModule):
             if module._save_output:
                 outputs[name] = module._output
                 del module._output
+        if not outputs:
+            return normal_output
         return outputs
 
 # create copies of all modules in nn so that they follow this
