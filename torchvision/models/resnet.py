@@ -1,4 +1,5 @@
-import torch.nn as nn
+#import torch.nn as nn
+from . import module as nn
 import torch.utils.model_zoo as model_zoo
 
 
@@ -98,7 +99,7 @@ class Bottleneck(nn.Module):
         return out
 
 
-class ResNet(nn.Module):
+class ResNet(nn.VisionModel):
 
     def __init__(self, block, layers, num_classes=1000, zero_init_residual=False):
         super(ResNet, self).__init__()
@@ -166,7 +167,7 @@ class ResNet(nn.Module):
         return x
 
 
-def resnet18(pretrained=False, **kwargs):
+def resnet18(pretrained=False, return_layers=None, **kwargs):
     """Constructs a ResNet-18 model.
 
     Args:
@@ -175,6 +176,20 @@ def resnet18(pretrained=False, **kwargs):
     model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
+
+    if not return_layers:
+        return model
+    to_be_returned = []
+    for name, module in model.named_modules():
+        if name in return_layers:
+            module._save_output = True
+            to_be_returned.append(name)
+            # TODO needs better way of enforcing
+            # which one is the last layer to be
+            # computed
+            if name == return_layers[-1]:
+                module._is_last = True
+    assert set(to_be_returned) == set(return_layers)
     return model
 
 
