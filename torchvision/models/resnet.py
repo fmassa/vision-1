@@ -148,21 +148,32 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
+    def run(self, name, output, return_layers, *args, **kwargs):
+        x = getattr(self, name)(*args, **kwargs)
+        if not return_layers:
+            return x
+        if name in return_layers:
+            output[name] = x
+        return x
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+    def forward(self, x, return_layers=None):
+        outputs = {}
+        x = self.run('conv1', outputs, return_layers, x)
+        x = self.run('bn1', outputs, return_layers, x)
+        x = self.run('relu', outputs, return_layers, x)
+        x = self.run('maxpool', outputs, return_layers, x)
 
-        x = self.avgpool(x)
+        x = self.run('layer1', outputs, return_layers, x)
+        x = self.run('layer2', outputs, return_layers, x)
+        x = self.run('layer3', outputs, return_layers, x)
+        x = self.run('layer4', outputs, return_layers, x)
+
+        x = self.run('avgpool', outputs, return_layers, x)
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        x = self.run('fc', outputs, return_layers, x)
 
+        if return_layers:
+            return outputs
         return x
 
 
