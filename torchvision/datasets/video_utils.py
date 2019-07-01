@@ -13,6 +13,8 @@ def unfold(tensor, size, step, dilation):
     numel = tensor.numel()
     new_stride = (step * o_stride, dilation * o_stride)
     new_size = ((numel - (dilation * (size - 1) + 1)) // step + 1, size)
+    if new_size[0] < 1:
+        new_size = (0, size)
     return torch.as_strided(tensor, new_size, new_stride)
 
 
