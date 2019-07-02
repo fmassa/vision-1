@@ -50,12 +50,16 @@ class VideoClips(object):
     def num_clips(self):
         return self.cumulative_sizes[-1]
 
-    def get_clip_pts_in_flat_index(self, idx):
+    def get_clip_location(self, idx):
         video_idx = bisect.bisect_right(self.cumulative_sizes, idx)
         if video_idx == 0:
             clip_idx = idx
         else:
             clip_idx = idx - self.cumulative_sizes[video_idx - 1]
+        return video_idx, clip_idx
+
+    def get_clip_pts_in_flat_index(self, idx):
+        video_idx, clip_idx = self.get_clip_location(idx)
         return self.video_paths[video_idx], self.clips[video_idx][clip_idx], video_idx
 
     def get_all_clip_pts_in_video(self, idx):
@@ -68,12 +72,3 @@ class VideoClips(object):
         # TODO change video_fps in info?
         assert len(video) == self.num_frames
         return video, audio, info, video_idx
-
-
-if __name__ == "__main__":
-    p = "/datasets01_101/kinetics/070618/train_avi-480p/riding_a_bike/"
-    f = ["4w5sIgC-v4A_000044_000054.avi", "E-JT00ntkUs_000002_000012.avi", "wQpxAGdYuYc_000002_000012.avi"]
-    import os
-    c = [os.path.join(p, ff) for ff in f]
-    video_clips = VideoClips(c)
-    from IPython import embed; embed()
