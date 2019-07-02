@@ -1,20 +1,21 @@
 from .video_utils import VideoClips
 from .utils import list_dir
 from .folder import make_dataset
+from .vision import VisionDataset
 
 
-class KineticsVideo(object):
-    def __init__(self, root):
+class KineticsVideo(VisionDataset):
+    def __init__(self, root, frames_per_clip, step_between_clips=1):
+        super(KineticsVideo, self).__init__(root)
         extensions = ('avi',)
-        self.root = root
 
         classes = list(sorted(list_dir(root)))
         class_to_idx = {classes[i]: i for i in range(len(classes))}
         self.samples = make_dataset(self.root, class_to_idx, extensions, is_valid_file=None)
         self.classes = classes
-        self.class_to_idx = class_to_idx
+        # self.class_to_idx = class_to_idx
         video_list = [x[0] for x in self.samples[:10]]
-        self.video_clips = VideoClips(video_list)
+        self.video_clips = VideoClips(video_list, frames_per_clip, step_between_clips)
 
     def __len__(self):
         return self.video_clips.num_clips()
