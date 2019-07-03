@@ -126,6 +126,7 @@ def read_video(filename, start_pts=0, end_pts=None):
         video_frames = _read_from_stream(container, start_pts, end_pts,
                                          container.streams.video[0], {'video': 0})
         info["video_fps"] = float(container.streams.video[0].average_rate)
+        info["video_pts"] = [x.pts for x in video_frames]
     audio_frames = []
     if container.streams.audio:
         audio_frames = _read_from_stream(container, start_pts, end_pts,
@@ -169,3 +170,11 @@ def read_video_timestamps(filename):
                                          container.streams.video[0], {'video': 0})
     container.close()
     return [x.pts for x in video_frames]
+
+
+def _read_video_timestamps_approx(container):
+    stream = container.streams[0]
+    pts_step = int(round(float(1 / (stream.average_rate * stream.time_base))))
+    num_frames = int(round(float(stream.average_rate * stream.time_base * stream.duration)))
+    expected_pts = [i * pts_step for i in range(num_frames)]
+    return expected_pts
