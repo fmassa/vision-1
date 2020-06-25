@@ -8,6 +8,7 @@
 #include <hip/hip_runtime.h>
 #endif
 
+/*
 #include "DeformConv.h"
 #include "PSROIAlign.h"
 #include "PSROIPool.h"
@@ -15,6 +16,8 @@
 #include "ROIPool.h"
 #include "empty_tensor_op.h"
 #include "nms.h"
+*/
+#include "interpolate.h"
 
 // If we are in a Windows environment, we need to define
 // initialization functions for the _C extension
@@ -44,6 +47,7 @@ int64_t _cuda_version() {
 
 static auto registry =
     torch::RegisterOperators()
+  /*
         .op("torchvision::nms", &nms)
         .op("torchvision::roi_align(Tensor input, Tensor rois, float spatial_scale, int pooled_height, int pooled_width, int sampling_ratio, bool aligned) -> Tensor",
             &roi_align)
@@ -52,4 +56,6 @@ static auto registry =
         .op("torchvision::ps_roi_align", &ps_roi_align)
         .op("torchvision::ps_roi_pool", &ps_roi_pool)
         .op("torchvision::deform_conv2d", &deform_conv2d)
-        .op("torchvision::_cuda_version", &_cuda_version);
+        */
+        .op("torchvision::_cuda_version", &_cuda_version)
+        .op("torchvision::interpolate", &interpolate_cpu);

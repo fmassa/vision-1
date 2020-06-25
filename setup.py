@@ -105,6 +105,7 @@ def get_extensions():
         source_cuda = glob.glob(os.path.join(extensions_dir, 'cuda', '*.cu'))
 
     sources = main_file + source_cpu
+    sources = main_file
     extension = CppExtension
 
     compile_cpp_tests = os.getenv('WITH_CPP_MODELS_TEST', '0') == '1'
@@ -174,7 +175,7 @@ def get_extensions():
     ffmpeg_exe = distutils.spawn.find_executable('ffmpeg')
     has_ffmpeg = ffmpeg_exe is not None
 
-    if has_ffmpeg:
+    if False:#has_ffmpeg:
         ffmpeg_bin = os.path.dirname(ffmpeg_exe)
         ffmpeg_root = os.path.dirname(ffmpeg_bin)
         ffmpeg_include_dir = os.path.join(ffmpeg_root, 'include')
