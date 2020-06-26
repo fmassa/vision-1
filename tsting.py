@@ -3,8 +3,8 @@ import torch, torchvision
 
 def interp(x, scale=2):
     o1, o2 = int(x.shape[-2] * scale), int(x.shape[-1] * scale)
-    temp = torch.ops.torchvision.interpolate(x, o1, 2)
-    return torch.ops.torchvision.interpolate(temp, o2, 3)
+    temp = torch.ops.torchvision.interpolate(x, [o1], [2])
+    return torch.ops.torchvision.interpolate(temp, [o2], [3])
 
 
 def timeit(f, n=5):
@@ -22,7 +22,7 @@ a = torch.rand(*shape).permute(0, 3, 1, 2)
 a_c = a.contiguous()
 
 
-for shape, n in [([1, 64, 64, 3], 100), ([1, 512, 512, 3], 100)]:
+for shape, n in [([1, 64, 64, 3], 10), ([1, 512, 512, 3], 10)]:
     a = torch.rand(*shape).permute(0, 3, 1, 2)
     a_c = a.contiguous()
 
