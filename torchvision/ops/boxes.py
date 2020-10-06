@@ -169,19 +169,17 @@ def box_convert(boxes: Tensor, in_fmt: str, out_fmt: str) -> Tensor:
             boxes = _box_cxcywh_to_xyxy(boxes)
         in_fmt = 'xyxy'
 
-    boxes_converted : Optional[torch.Tensor] = None
     if in_fmt == "xyxy":
         if out_fmt == "xywh":
-            boxes_converted = _box_xyxy_to_xywh(boxes)
+            boxes = _box_xyxy_to_xywh(boxes)
         elif out_fmt == "cxcywh":
-            boxes_converted = _box_xyxy_to_cxcywh(boxes)
+            boxes = _box_xyxy_to_cxcywh(boxes)
     elif out_fmt == "xyxy":
         if in_fmt == "xywh":
-            boxes_converted = _box_xywh_to_xyxy(boxes)
+            boxes = _box_xywh_to_xyxy(boxes)
         elif in_fmt == "cxcywh":
-            boxes_converted = _box_cxcywh_to_xyxy(boxes)
-    assert boxes_converted is not None
-    return boxes_converted
+            boxes = _box_cxcywh_to_xyxy(boxes)
+    return boxes
 
 
 def box_area(boxes: Tensor) -> Tensor:
